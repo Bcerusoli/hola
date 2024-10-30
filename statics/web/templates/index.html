@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Publicidad y Ventas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Análisis de Publicidad y Ventas</h1>
+        </header>
+        <main>
+            <section class="upload-section">
+                <h2>Sube tu archivo de datos</h2>
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" accept=".csv, .xlsx, .xls" required>
+                    <button type="submit">Subir y Analizar</button>
+                </form>
+                {% with messages = get_flashed_messages() %}
+                  {% if messages %}
+                      <ul>
+                          {% for message in messages %}
+                              <li style="color: red;">{{ message }}</li>
+                          {% endfor %}
+                      </ul>
+                  {% endif %}
+                {% endwith %}
+            </section>
+
+            {% if graph_json %}
+                <section class="results-section">
+                    <h2>Resultados del Análisis</h2>
+                    <div id="graph"></div>
+                    <script>
+                        var graph = {{ graph_json | safe }};
+                        Plotly.newPlot('graph', graph.data, graph.layout);
+                    </script>
+                    <p>Coeficiente de determinación (R²): {{ r_squared }}</p>
+                    <p>Tendencia de la recta: {{ trend }}</p>
+                    <p>Interpretación: {{ interpretation }}</p>
+                </section>
+            {% endif %}
+        </main>
+        <footer>
+            <p>&copy; 2024 Análisis de Datos Publicidad y Ventas</p>
+        </footer>
+    </div>
+</body>
+</html>
